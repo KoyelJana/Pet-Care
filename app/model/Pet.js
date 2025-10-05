@@ -2,10 +2,11 @@ const mongoose = require("mongoose");
 
 const PetSchema = new mongoose.Schema(
     {
+        // Keep as ObjectId for valid shelters, but allow null for safety
         shelterId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "shelter",
-            required: true
+            default: null
         },
         name: { type: String, required: true },
         species: { type: String, required: true },

@@ -28,6 +28,10 @@ app.use(ShelterRoute);
 const PetRoute=require('./app/route/PetRouter');
 app.use(PetRoute);
 
+//Application Route
+const ApplicationRoute=require('./app/route/ApplicationRouter');
+app.use(ApplicationRoute);
+
 
 const port = 3070
 
