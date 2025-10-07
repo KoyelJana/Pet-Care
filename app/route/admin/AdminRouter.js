@@ -27,6 +27,17 @@ router.get("/pets/edit/:id", adminAuth, AdminController.editPetForm);
 router.post("/pets/edit/:id", adminAuth, MulterImage.single('image'),  AdminController.updatePet);
 router.get("/pets/delete/:id", adminAuth, AdminController.deletePet);
 
+//shelters
+router.get("/shelters", adminAuth, AdminController.listShelters);
+
+//Application
+// Admin view all adoption applications
+router.get("/applications", adminAuth, AdminController.getAllApplications);
+// Approve
+router.get("/applications/approve/:id", adminAuth, AdminController.approveApplication);
+// Reject
+router.get("/applications/reject/:id", adminAuth, AdminController.rejectApplication);
+
 //logout
 router.get('/logout', adminAuth, AdminController.AdminLogout)
 

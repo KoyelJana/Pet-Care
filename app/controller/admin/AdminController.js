@@ -10,6 +10,7 @@ const path = require("path");
 const Pet=require('../../model/Pet')
 const Shelter = require("../../model/Shelter");
 const mongoose = require("mongoose");
+const Application=require('../../model/Application')
 
 class AdminController {
 
@@ -319,6 +320,7 @@ class AdminController {
     }
 
 
+    //Pet\\
     //List all pets
     async listAllPets(req, res) {
         try {
@@ -477,6 +479,183 @@ class AdminController {
     }
 
 
+    //Shelter\\
+    // View all shelters
+    async listShelters(req, res) {
+        try {
+            const shelters = await Shelter.aggregate([
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "userId",
+                        foreignField: "_id",
+                        as: "user"
+                    }
+                },
+                { $unwind: "$user" },
+                {
+                    $project: {
+                        _id: 1,
+                        name: 1,
+                        address: 1,
+                        contact: 1,
+                        createdAt: 1,
+                        "user.name": 1,
+                        "user.email": 1,
+                        "user.contact": 1
+                    }
+                }
+            ]);
+
+            res.render("admin/List_shelters", {
+                title: "Shelter Information",
+                shelters,
+                message: req.flash("message"),
+                user: req.user
+            });
+        } catch (err) {
+            console.error(err);
+            req.flash("message", "Failed to load shelters");
+            res.redirect("/admin/shelters");
+        }
+    }
+
+
+    //Application\\
+    //Show all adoption applications grouped by status
+    async getAllApplications(req, res) {
+        try {
+            const pendingApplications = await Application.aggregate([
+                { $match: { status: "pending" } },
+                {
+                    $lookup: {
+                        from: "pets",
+                        localField: "petId",
+                        foreignField: "_id",
+                        as: "pet"
+                    }
+                },
+                { $unwind: "$pet" },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "adopterId",
+                        foreignField: "_id",
+                        as: "adopter"
+                    }
+                },
+                { $unwind: "$adopter" },
+                { $sort: { submittedOn: -1 } }
+            ]);
+
+            const approvedApplications = await Application.aggregate([
+                { $match: { status: "approved" } },
+                {
+                    $lookup: {
+                        from: "pets",
+                        localField: "petId",
+                        foreignField: "_id",
+                        as: "pet"
+                    }
+                },
+                { $unwind: "$pet" },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "adopterId",
+                        foreignField: "_id",
+                        as: "adopter"
+                    }
+                },
+                { $unwind: "$adopter" },
+                { $sort: { submittedOn: -1 } }
+            ]);
+
+            const rejectedApplications = await Application.aggregate([
+                { $match: { status: "rejected" } },
+                {
+                    $lookup: {
+                        from: "pets",
+                        localField: "petId",
+                        foreignField: "_id",
+                        as: "pet"
+                    }
+                },
+                { $unwind: "$pet" },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "adopterId",
+                        foreignField: "_id",
+                        as: "adopter"
+                    }
+                },
+                { $unwind: "$adopter" },
+                { $sort: { submittedOn: -1 } }
+            ]);
+
+            res.render("admin/All_applications", {
+                title: "All Adoption Applications",
+                pendingApplications,
+                approvedApplications,
+                rejectedApplications,
+                message: req.flash("message"),
+                user: req.user
+            });
+
+        } catch (error) {
+            console.error("Error fetching applications:", error);
+            req.flash("message", "Error fetching applications");
+            res.redirect("/admin/dashboard");
+        }
+    }
+
+    //Approve application
+    async approveApplication(req, res) {
+        try {
+            const appId = req.params.id;
+            const application = await Application.findById(appId);
+
+            if (!application) {
+                req.flash("message", "Application not found");
+                return res.redirect("/admin/applications");
+            }
+
+            // Update the selected application
+            await Application.findByIdAndUpdate(appId, { status: "approved" });
+
+            // Update related pet status
+            await Pet.findByIdAndUpdate(application.petId, { status: "adopted" });
+
+            // Reject all other pending applications for the same pet
+            await Application.updateMany(
+                { petId: application.petId, _id: { $ne: appId }, status: "pending" },
+                { $set: { status: "rejected" } }
+            );
+
+            req.flash("message", "Application approved successfully, pet marked as adopted.");
+            res.redirect("/admin/applications");
+
+        } catch (error) {
+            console.error("Error approving application:", error);
+            req.flash("message", "Error approving application");
+            res.redirect("/admin/applications");
+        }
+    }
+
+    //Reject application
+    async rejectApplication(req, res) {
+        try {
+            const appId = req.params.id;
+            await Application.findByIdAndUpdate(appId, { status: "rejected" });
+            req.flash("message", "Application rejected successfully!");
+            res.redirect("/admin/applications");
+        } catch (err) {
+            console.error("Error rejecting application:", err);
+            req.flash("message", "Failed to reject application");
+            res.redirect("/admin/applications");
+        }
+    }
 }
 
 module.exports = new AdminController()

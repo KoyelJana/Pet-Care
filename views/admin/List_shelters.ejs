@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%-include('./layouts/header')%>
+
+    <body id="page-top">
+
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+
+            <!-- Sidebar -->
+            <%-include('./layouts/sidebar')%>
+                <!-- End of Sidebar -->
+
+                <!-- Content Wrapper -->
+                <div id="content-wrapper" class="d-flex flex-column">
+
+                    <!-- Main Content -->
+                    <div id="content">
+
+                        <!-- Topbar -->
+                        <%-include('./layouts/topbar')%>
+                            <!-- End of Topbar -->
+
+                            <!-- Begin Page Content -->
+                            <div class="container-fluid">
+
+                                <!-- Page Heading -->
+                                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                    <h1 class="h3 mb-0 text-gray-800">All Registered Shelters</h1>
+                                </div>
+
+                                <!-- Flash Message -->
+                                <% if (message && message.length> 0) { %>
+                                    <div class="alert alert-info">
+                                        <%= message %>
+                                    </div>
+                                    <% } %>
+
+                                    <% if (shelters.length === 0) { %>
+    <p>No shelters found.</p>
+  <% } else { %>
+    <table class="table table-bordered table-striped shadow-sm">
+      <thead class="table-dark" style="background-color: black;">
+        <tr>
+          <th>SL No.</th>
+          <th>Shelter Name</th>
+          <th>Address</th>
+          <th>Contact</th>
+          <th>Owner Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Registered On</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% shelters.forEach((s, index) => { %>
+          <tr>
+            <td><%= index + 1 %></td>
+            <td><%= s.name %></td>
+            <td><%= s.address %></td>
+            <td><%= s.contact %></td>
+            <td><%= s.user.name %></td>
+            <td><%= s.user.email %></td>
+            <td><%= s.user.contact %></td>
+            <td><%= new Date(s.createdAt).toLocaleDateString() %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+
+                            </div>
+                            <!-- /.container-fluid -->
+
+                    </div>
+                    <!-- End of Main Content -->
+
+                    <!-- Footer -->
+                    <%-include('./layouts/footer')%>
+    </body>
+
+</html>
