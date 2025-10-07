@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%-include('./layouts/header')%>
+
+    <body id="page-top">
+
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+
+            <!-- Sidebar -->
+            <%-include('./layouts/sidebar')%>
+                <!-- End of Sidebar -->
+
+                <!-- Content Wrapper -->
+                <div id="content-wrapper" class="d-flex flex-column">
+
+                    <!-- Main Content -->
+                    <div id="content">
+
+                        <!-- Topbar -->
+                        <%-include('./layouts/topbar')%>
+                            <!-- End of Topbar -->
+
+                            <!-- Begin Page Content -->
+                            <div class="container-fluid">
+
+                                <!-- Page Heading -->
+                                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                                    <h1 class="h3 mb-0 text-gray-800">Add New Pet</h1>
+                                </div>
+
+                                <!-- Flash Message -->
+                                <% if (message && message.length> 0) { %>
+                                    <div class="alert alert-info">
+                                        <%= message %>
+                                    </div>
+                                    <% } %>
+
+                                        <form action="/admin/pets/add" method="POST" enctype="multipart/form-data">
+                                            <input type="text" name="name" placeholder="Pet Name"
+                                                class="form-control mb-3">
+                                            <input type="text" name="species" placeholder="Species"
+                                                class="form-control mb-3">
+                                            <input type="text" name="breed" placeholder="Breed"
+                                                class="form-control mb-3">
+                                            <input type="number" name="age" placeholder="Age" class="form-control mb-3">
+                                            <select name="gender" class="form-control mb-3">
+                                                <option>Male</option>
+                                                <option>Female</option>
+                                            </select>
+                                            <textarea name="description" placeholder="Description"
+                                                class="form-control mb-3"></textarea>
+                                            <select name="status" class="form-control mb-3">
+                                                <option value="available">Available</option>
+                                                <option value="adopted">Adopted</option>
+                                            </select>
+                                            <select name="shelterId" class="form-control mb-3">
+                                                <% shelters.forEach(s=> { %>
+                                                    <option value="<%= s._id %>">
+                                                        <%= s.name %>
+                                                    </option>
+                                                    <% }) %>
+                                            </select>
+                                            <input type="file" name="image" class="form-control mb-3">
+                                            <button type="submit" class="btn btn-success">Add Pet</button>
+                                        </form>
+
+                            </div>
+                            <!-- /.container-fluid -->
+
+                    </div>
+                    <!-- End of Main Content -->
+
+                    <!-- Footer -->
+                    <%-include('./layouts/footer')%>
+    </body>
+
+</html>
