@@ -7,17 +7,17 @@ const EmailVerificationModel = require('../../model/otpModel');
 const transporter = require('../../config/emailConfig');
 const fs = require("fs");
 const path = require("path");
-const Pet=require('../../model/Pet')
+const Pet = require('../../model/Pet')
 const Shelter = require("../../model/Shelter");
 const mongoose = require("mongoose");
-const Application=require('../../model/Application')
+const Application = require('../../model/Application')
 
 class AdminController {
 
     //Admin register form
     async AdminRegister(req, res) {
         try {
-            res.render('admin/Admin_register', { 
+            res.render('admin/Admin_register', {
                 title: 'Admin Register Page',
                 message: req.flash('message')
             });
@@ -304,9 +304,23 @@ class AdminController {
     //Admin Dashboard
     async Admindashboard(req, res) {
         try {
+            // Count pets
+            const totalAvailablePets = await Pet.countDocuments({ status: "available" });
+            const totalAdoptedPets = await Pet.countDocuments({ status: "adopted" });
+
+            // Count applications by status
+            const totalPendingApps = await Application.countDocuments({ status: "pending" });
+            const totalApprovedApps = await Application.countDocuments({ status: "approved" });
+            const totalRejectedApps = await Application.countDocuments({ status: "rejected" });
+
             res.render('admin/Admin_dashboard', {
                 title: "admin_dashboard",
-                user: req.user
+                user: req.user,
+                totalAvailablePets,
+                totalAdoptedPets,
+                totalPendingApps,
+                totalApprovedApps,
+                totalRejectedApps,
             })
         } catch (error) {
             console.log(error);

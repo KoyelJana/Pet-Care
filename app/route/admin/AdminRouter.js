@@ -34,9 +34,9 @@ router.get("/shelters", adminAuth, AdminController.listShelters);
 // Admin view all adoption applications
 router.get("/applications", adminAuth, AdminController.getAllApplications);
 // Approve
-router.get("/applications/approve/:id", adminAuth, AdminController.approveApplication);
+router.post("/applications/approve/:id", adminAuth, AdminController.approveApplication);
 // Reject
-router.get("/applications/reject/:id", adminAuth, AdminController.rejectApplication);
+router.post("/applications/reject/:id", adminAuth, AdminController.rejectApplication);
 
 //logout
 router.get('/logout', adminAuth, AdminController.AdminLogout)

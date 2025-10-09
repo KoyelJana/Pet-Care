@@ -18,7 +18,7 @@ const UserSchema = new Schema({
     role: {
         type: String,
         enum: ["adopter", "shelter", "admin"],
-        required: true
+        default: "adopter"
     },
     contact: String,
     createdAt: {

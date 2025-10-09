@@ -30,7 +30,124 @@
                                     <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
                                 </div>
 
-                                
+                                <div class="row">
+
+            <!-- Available Pets -->
+            <div class="col-md-4 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Available Pets</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><%= totalAvailablePets %></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-paw fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Adopted Pets -->
+            <div class="col-md-4 mb-4">
+              <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                        Adopted Pets</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><%= totalAdoptedPets %></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-dog fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pending Applications -->
+            <div class="col-md-4 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                        Pending Applications</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><%= totalPendingApps %></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Approved Applications -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Approved Applications</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><%= totalApprovedApps %></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rejected Applications -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                        Rejected Applications</div>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800"><%= totalRejectedApps %></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-times-circle fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ========= CHARTS ========= -->
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Pets Bar Chart</h6>
+              </div>
+              <div class="card-body">
+                <canvas id="petsBarChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="card shadow mb-4">
+              <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Applications Pie Chart</h6>
+              </div>
+              <div class="card-body">
+                <canvas id="appsPieChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+          </div>
 
                                
 
@@ -42,6 +159,42 @@
 
                     <!-- Footer -->
                     <%-include('./layouts/footer')%>
+
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // ===== BAR CHART FOR PETS =====
+  const petsBarCtx = document.getElementById('petsBarChart').getContext('2d');
+  new Chart(petsBarCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Available Pets', 'Adopted Pets'],
+      datasets: [{
+        label: 'Pets',
+        data: ["<%= totalAvailablePets %>", "<%= totalAdoptedPets %>"],
+        backgroundColor: ['#1cc88a', '#36b9cc']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+  // ===== PIE CHART FOR APPLICATIONS =====
+  const appsPieCtx = document.getElementById('appsPieChart').getContext('2d');
+  new Chart(appsPieCtx, {
+    type: 'pie',
+    data: {
+      labels: ['Pending', 'Approved', 'Rejected'],
+      datasets: [{
+        data: ["<%= totalPendingApps %>", "<%= totalApprovedApps %>", "<%= totalRejectedApps %>"],
+        backgroundColor: ['#f6c23e', '#4e73df', '#e74a3b']
+      }]
+    },
+    options: { responsive: true }
+  });
+</script>
     </body>
 
 </html>
